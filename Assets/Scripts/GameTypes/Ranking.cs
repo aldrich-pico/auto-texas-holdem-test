@@ -1,4 +1,6 @@
-﻿namespace GameTypes
+﻿using System.Collections.Generic;
+
+namespace GameTypes
 {
     public struct Ranking
     {
@@ -18,14 +20,12 @@
         }
 
         public Rank rank;
-        public Card highCard;
-        public Card lowCard;
+        public List<Card> cards;
 
-        public Ranking(Rank rank, Card highCard, Card lowCard)
+        public Ranking(Rank rank, List<Card> cards)
         {
             this.rank = rank;
-            this.highCard = highCard;
-            this.lowCard = lowCard;
+            this.cards = cards;
         }
     }
 }

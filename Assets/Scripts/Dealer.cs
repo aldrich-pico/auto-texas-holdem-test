@@ -64,16 +64,23 @@ public class Dealer
             combinedCards.AddRange(communityCards);
 
             //DEBUG
-            //{
-            //    combinedCards.Clear();
-            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.ACE));
-            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.JACK));
-            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.KING));
-            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.SIX));
-            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.TEN));
-            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.QUEEN));
-            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.TWO));
-            //}
+            {
+                combinedCards.Clear();
+                //combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.ACE));
+                //combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.JACK));
+                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.KING));
+                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.JACK));
+                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.TEN));
+                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.QUEEN));
+                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.NINE));
+                combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.ACE));
+                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.EIGHT));
+                combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.KING));
+                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.JACK));
+                combinedCards.Add(new Card(Card.Suit.SPADE, Card.Value.TEN));
+                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.QUEEN));
+                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.NINE));
+            }
 
             Ranking ranking = HandRankManager.GetHandRankManager().EvaluateRank(combinedCards);
             Debug.Log("Evaluated");

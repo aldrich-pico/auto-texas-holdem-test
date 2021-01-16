@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameTypes;
 
 public class Dealer
 {
@@ -10,8 +11,8 @@ public class Dealer
 
     private Deck deck;
 
-    List<Deck.Card>[] playerHands = new List<Deck.Card>[NUMBER_OF_PLAYERS];
-    List<Deck.Card> communityCards = new List<Deck.Card>();
+    public List<Card>[] playerHands = new List<Card>[NUMBER_OF_PLAYERS];
+    public List<Card> communityCards = new List<Card>();
 
     private Dealer()
     {
@@ -27,16 +28,55 @@ public class Dealer
         return _instance;
     }
 
-    public void DealCards()
+    public List<Card>[] DealCards()
     {
         for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
-            playerHands[i] = deck.DrawCards(CARDS_PER_PLAYER);
+            if (playerHands[i] == null)
+                playerHands[i] = new List<Card>();
+            else
+                playerHands[i].Clear();
+
+            playerHands[i].AddRange(deck.DrawCards(CARDS_PER_PLAYER));
         }
+
+        return playerHands;
     }
 
-    public void DealCommunityCards()
+    public List<Card> DealCommunityCards()
     {
-        communityCards = deck.DrawCards(NUMBER_OF_COMMUNITY_CARDS);
+        if (communityCards == null)
+            communityCards = new List<Card>();
+        else
+            communityCards.Clear();
+
+        communityCards.AddRange(deck.DrawCards(NUMBER_OF_COMMUNITY_CARDS));
+
+        return communityCards;
+    }
+
+    public void EvaluateHands()
+    {
+        for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
+        {
+            List<Card> combinedCards = new List<Card>();
+            combinedCards.AddRange(playerHands[i]);
+            combinedCards.AddRange(communityCards);
+
+            //DEBUG
+            //{
+            //    combinedCards.Clear();
+            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.ACE));
+            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.JACK));
+            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.KING));
+            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.SIX));
+            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.TEN));
+            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.QUEEN));
+            //    combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.TWO));
+            //}
+
+            Ranking ranking = HandRankManager.GetHandRankManager().EvaluateRank(combinedCards);
+            Debug.Log("Evaluated");
+        }
     }
 }

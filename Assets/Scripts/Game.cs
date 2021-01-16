@@ -44,5 +44,8 @@ public class Game : MonoBehaviour
 
         Dealer.GetDealer().DealCards();
         Dealer.GetDealer().DealCommunityCards();
+        Dealer.GetDealer().EvaluateHands();
+
+        
     }
 }

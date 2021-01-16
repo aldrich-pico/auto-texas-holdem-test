@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameTypes;
 
 public class Deck
 {
@@ -49,44 +50,5 @@ public class Deck
         cards.Clear();
 
         CreateDeck();
-    }
-
-    public struct Card
-    {
-        public enum Suit
-        {
-            HEART,
-            SPADE,
-            CLUB,
-            DIAMOND,
-            MAX_SUIT
-        }
-
-        public enum Value
-        {
-            TWO, 
-            THREE, 
-            FOUR, 
-            FIVE, 
-            SIX, 
-            SEVEN, 
-            EIGHT, 
-            NINE, 
-            TEN, 
-            JACK, 
-            QUEEN, 
-            KING, 
-            ACE,
-            MAX_VALUE
-        }
-
-        public Suit cardSuit;
-        public Value cardValue;
-
-        public Card(Suit suit, Value value)
-        {
-            cardSuit = suit;
-            cardValue = value;
-        }
     }
 }

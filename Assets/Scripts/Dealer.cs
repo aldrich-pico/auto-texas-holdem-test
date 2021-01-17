@@ -74,12 +74,12 @@ public class Dealer
                 //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.QUEEN));
                 //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.NINE));
                 combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.ACE));
-                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.EIGHT));
+                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.KING));
                 combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.KING));
-                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.JACK));
-                combinedCards.Add(new Card(Card.Suit.SPADE, Card.Value.TEN));
-                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.QUEEN));
-                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.NINE));
+                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.TWO));
+                combinedCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.KING));
+                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.EIGHT));
+                combinedCards.Add(new Card(Card.Suit.SPADE, Card.Value.SEVEN));
             }
 
             Ranking ranking = HandRankManager.GetHandRankManager().EvaluateRank(combinedCards);

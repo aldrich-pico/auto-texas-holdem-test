@@ -23,11 +23,12 @@ public class HandRankManager
     {
         Ranking ranking = new Ranking();
         ranking.cards = new List<Card>();
+        ranking.rank = Ranking.Rank.HIGH_CARD;
 
         SortHand(ref cards);
 
         List<Card> tmpCards = new List<Card>();
-        //Check for Royal Flush and Straight Flush from the highest straight
+        //Check for Straight, Royal Flush and Straight Flush from the highest straight
         if (CheckForStraight(cards, ref ranking.cards))
         {
             ranking.rank = Ranking.Rank.STRAIGHT; //Hand is automatically a straight, override if found royal flush or straight flush
@@ -71,8 +72,6 @@ public class HandRankManager
                 }
             }
         }
-        
-        //Check for Four of a Kind
 
         //Check for Flush
         if (ranking.rank == Ranking.Rank.STRAIGHT && CheckForFlush(cards, ref ranking.cards)) //If previous check found a straight then this found a flush (but not share the same cards) override to flush
@@ -82,17 +81,128 @@ public class HandRankManager
             Debug.Log("Hand is a flush");
         }
 
-        //Check for Full House
 
-        //Check Straight -- Check already done in royal/straigh flush check
+        Dictionary<Card.Value, List<Card>> pairSets = GatherPairs(cards);
+        int fourKindCtr = 0;
+        int threeKindCtr = 0;
+        int onePairCtr = 0;
 
-        //Check for Three of a Kind
+        foreach (KeyValuePair<Card.Value, List<Card>> cardSet in pairSets)
+        {
+            if (cardSet.Value.Count == 4)
+                fourKindCtr++;
+            else if (cardSet.Value.Count == 3)
+                threeKindCtr++;
+            else if (cardSet.Value.Count == 2)
+                onePairCtr++;
+        }
 
-        //Check for Two Pairs
-
-        //Check for One Pair
-
-        //Check the High Card
+        ranking.cards.Clear();
+        int kickerCardCtr = 0;
+        if (fourKindCtr >= 1)
+        {
+            kickerCardCtr = 0;
+            foreach (KeyValuePair<Card.Value, List<Card>> cardSet in pairSets)
+            {
+                if (cardSet.Value.Count == 4)
+                {
+                    ranking.cards.AddRange(cardSet.Value);
+                }
+                else if (kickerCardCtr < 1) //Fill the hand with 1 high card to pair with Four of a Kind hand
+                {
+                    kickerCardCtr++;
+                    ranking.cards.Add(cardSet.Value[0]);
+                }
+                else if (ranking.cards.Count >= 5)
+                    break;
+            }
+            ranking.rank = Ranking.Rank.FOUR_OF_A_KIND;
+            Debug.Log("Hand is four of a kind!");
+        }
+        else if(threeKindCtr >= 2 || (threeKindCtr == 1 && onePairCtr >= 1))
+        {
+            int fullHouseCtr = 0;
+            foreach (KeyValuePair<Card.Value, List<Card>> cardSet in pairSets)
+            {
+                if (cardSet.Value.Count == 3 && fullHouseCtr < 1)
+                {
+                    fullHouseCtr++;
+                    ranking.cards.AddRange(cardSet.Value);
+                }
+                else if (cardSet.Value.Count >= 2)
+                {
+                    ranking.cards.AddRange(cardSet.Value.GetRange(0, 2));
+                }
+            }
+            ranking.rank = Ranking.Rank.FULL_HOUSE;
+            Debug.Log("Hand is full house");
+        }
+        else if (threeKindCtr == 1)
+        {
+            kickerCardCtr = 0;
+            foreach (KeyValuePair<Card.Value, List<Card>> cardSet in pairSets)
+            {
+                if (cardSet.Value.Count == 3)
+                {
+                    ranking.cards.AddRange(cardSet.Value);
+                }
+                else if (kickerCardCtr < 2) //Fill the hand with 2 high cards to pair with Three of a Kind hand
+                {
+                    kickerCardCtr++;
+                    ranking.cards.Add(cardSet.Value[0]);
+                }
+                else if (ranking.cards.Count >= 5)
+                    break;
+            }
+            ranking.rank = Ranking.Rank.THREE_OF_A_KIND;
+            Debug.Log("Hand is three of a kind");
+        }
+        else if (onePairCtr > 1)
+        {
+            kickerCardCtr = 0;
+            foreach (KeyValuePair<Card.Value, List<Card>> cardSet in pairSets)
+            {
+                if (cardSet.Value.Count == 2 && ranking.cards.Count < 4)
+                {
+                    ranking.cards.AddRange(cardSet.Value);
+                }
+                else if (kickerCardCtr < 1) //Fill the hand with 1 high card to pair with Two Pairs hand
+                {
+                    kickerCardCtr++;
+                    ranking.cards.Add(cardSet.Value[0]);
+                }
+                else if (ranking.cards.Count >= 5)
+                    break;
+            }
+            ranking.rank = Ranking.Rank.TWO_PAIRS;
+            Debug.Log("Hand is two pairs");
+        }
+        else if (onePairCtr == 1)
+        {
+            kickerCardCtr = 0;
+            foreach (KeyValuePair<Card.Value, List<Card>> cardSet in pairSets)
+            {
+                if (cardSet.Value.Count == 2)
+                {
+                    ranking.cards.AddRange(cardSet.Value);
+                }
+                else if (kickerCardCtr < 3) //Fill the hand with 3 high cards to pair with One Pair hand
+                {
+                    kickerCardCtr++;
+                    ranking.cards.Add(cardSet.Value[0]);
+                }
+                else if (ranking.cards.Count >= 5)
+                    break;
+            }
+            ranking.rank = Ranking.Rank.ONE_PAIR;
+            Debug.Log("Hand is one pair");
+        }
+        else
+        {
+            ranking.cards.AddRange(cards.GetRange(0, 5));
+            ranking.rank = Ranking.Rank.HIGH_CARD;
+            Debug.Log("Hand is high card");
+        }
 
         return ranking;
     }
@@ -205,5 +315,26 @@ public class HandRankManager
         }
 
         return false;
+    }
+
+    private Dictionary<Card.Value, List<Card>> GatherPairs(List<Card> cardsToCheck)
+    {
+        Dictionary<Card.Value, List<Card>> pairs = new Dictionary<Card.Value, List<Card>>();
+
+        for (int i = 0; i < cardsToCheck.Count; i++)
+        {
+            if (!pairs.ContainsKey(cardsToCheck[i].cardValue))
+            {
+                List<Card> cardList = new List<Card>();
+                cardList.Add(cardsToCheck[i]);
+                pairs.Add(cardsToCheck[i].cardValue, cardList);
+            }
+            else
+            {
+                pairs[cardsToCheck[i].cardValue].Add(cardsToCheck[i]);
+            }
+        }
+
+        return pairs;
     }
 }

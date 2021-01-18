@@ -45,7 +45,10 @@ public class Game : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKey("escape"))
+        {
+            Application.Quit();
+        }
     }
 
     public void onPlayButton(Button playButton)

@@ -25,8 +25,6 @@ public class Deck
                 deckCardList.Add(new Card((Card.Suit)i, (Card.Value)j));
             }
         }
-
-        Debug.Log("Deck Created! Cards: " + deckCardList.Count);
     }
 
     public List<Card> DrawCards(int numberOfCards)

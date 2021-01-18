@@ -46,7 +46,7 @@ public class Dealer
             playerHands[i].AddRange(deck.DrawCards(CARDS_PER_PLAYER));
         }
 
-        ///*DEBUG
+        /*DEBUG
          {
             Debug.Log("Player 1:");
             Debug.Log(playerHands[0][0].cardValue.ToString()+"--"+ playerHands[0][0].cardSuit.ToString());
@@ -69,7 +69,7 @@ public class Dealer
 
         communityCards.AddRange(deck.DrawCards(NUMBER_OF_COMMUNITY_CARDS));
 
-        ///*DEBUG
+        /*DEBUG
         {
             Debug.Log("Community:");
             Debug.Log(communityCards[0].cardValue.ToString() + "--" + communityCards[0].cardSuit.ToString());
@@ -91,17 +91,17 @@ public class Dealer
             playerHands[1].Clear();
             communityCards.Clear();
 
-            playerHands[0].Add(new Card(Card.Suit.DIAMOND, Card.Value.FOUR));
-            playerHands[0].Add(new Card(Card.Suit.DIAMOND, Card.Value.FIVE));
+            playerHands[0].Add(new Card(Card.Suit.CLUB, Card.Value.SIX));
+            playerHands[0].Add(new Card(Card.Suit.HEART, Card.Value.JACK));
 
-            playerHands[1].Add(new Card(Card.Suit.SPADE, Card.Value.SEVEN));
-            playerHands[1].Add(new Card(Card.Suit.SPADE, Card.Value.THREE));
+            playerHands[1].Add(new Card(Card.Suit.HEART, Card.Value.TEN));
+            playerHands[1].Add(new Card(Card.Suit.SPADE, Card.Value.TWO));
 
-            communityCards.Add(new Card(Card.Suit.HEART, Card.Value.TWO));
-            communityCards.Add(new Card(Card.Suit.CLUB, Card.Value.SIX));
-            communityCards.Add(new Card(Card.Suit.CLUB, Card.Value.EIGHT));
-            communityCards.Add(new Card(Card.Suit.HEART, Card.Value.NINE));
-            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.SEVEN));
+            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.TEN));
+            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.FIVE));
+            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.SIX));
+            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.FOUR));
+            communityCards.Add(new Card(Card.Suit.HEART, Card.Value.QUEEN));
         {
             Debug.Log("Player 1:");
             Debug.Log(playerHands[0][0].cardValue.ToString()+"--"+ playerHands[0][0].cardSuit.ToString());

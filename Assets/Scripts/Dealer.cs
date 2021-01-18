@@ -91,16 +91,16 @@ public class Dealer
             playerHands[1].Clear();
             communityCards.Clear();
 
-            playerHands[0].Add(new Card(Card.Suit.CLUB, Card.Value.SIX));
-            playerHands[0].Add(new Card(Card.Suit.HEART, Card.Value.JACK));
+            playerHands[0].Add(new Card(Card.Suit.CLUB, Card.Value.THREE));
+            playerHands[0].Add(new Card(Card.Suit.SPADE, Card.Value.SIX));
 
-            playerHands[1].Add(new Card(Card.Suit.HEART, Card.Value.TEN));
-            playerHands[1].Add(new Card(Card.Suit.SPADE, Card.Value.TWO));
+            playerHands[1].Add(new Card(Card.Suit.HEART, Card.Value.SIX));
+            playerHands[1].Add(new Card(Card.Suit.SPADE, Card.Value.SIX));
 
-            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.TEN));
-            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.FIVE));
+            communityCards.Add(new Card(Card.Suit.SPADE, Card.Value.THREE));
+            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.THREE));
             communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.SIX));
-            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.FOUR));
+            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.FIVE));
             communityCards.Add(new Card(Card.Suit.HEART, Card.Value.QUEEN));
         {
             Debug.Log("Player 1:");
@@ -136,20 +136,5 @@ public class Dealer
     public void EvaluateWinner()
     {
         result = RankManager.GetHandRankManager().CompareRanks(rankings[0], rankings[1]);
-
-
-        //List<int> places = new List<int>();
-        //RankManager.Result result = RankManager.Result.DRAW;
-
-        //places.Add(0);
-        //for (int i = 1; i < rankings.Length - 1; i++)
-        //{
-        //     for(int j = 0; j < places.Count; j++)
-        //    {
-        //        //result = RankManager.GetHandRankManager().CompareRanks(rankings[i], rankings[j]);
-        //    }
-        //}
-
-        //return places;
     }
 }

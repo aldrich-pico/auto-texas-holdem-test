@@ -161,6 +161,7 @@ public class RankManager
         //Check if Straight already from the check above
         else if(ranking.rank == Ranking.Rank.STRAIGHT)
         {
+            ranking.cards.AddRange(tmpCards);
             return ranking;
         }
         //Check for Three of a Kind
@@ -310,6 +311,22 @@ public class RankManager
 
             }
         }
+        //Special check for ace on a low straight
+        if (cardsToCheck[0].cardValue == Card.Value.ACE &&
+            cardsToCheck[cardsToCheck.Count - 1].cardValue == Card.Value.TWO &&
+            cardsToCheck[cardsToCheck.Count - 2].cardValue == Card.Value.THREE &&
+            cardsToCheck[cardsToCheck.Count - 3].cardValue == Card.Value.FOUR &&
+            cardsToCheck[cardsToCheck.Count - 4].cardValue == Card.Value.FIVE)
+        {
+            participatingCards.Clear();
+            
+            participatingCards.Add(cardsToCheck[cardsToCheck.Count - 4]);
+            participatingCards.Add(cardsToCheck[cardsToCheck.Count - 3]);
+            participatingCards.Add(cardsToCheck[cardsToCheck.Count - 2]);
+            participatingCards.Add(cardsToCheck[cardsToCheck.Count - 1]);
+            participatingCards.Add(cardsToCheck[0]);
+            return true;
+        }
 
         return false;
     }
@@ -368,106 +385,77 @@ public class RankManager
 
     private Result ResolveDraw(Ranking rank, Ranking comparedToRank)
     {
-        if (rank.rank == Ranking.Rank.STRAIGHT ||
-            rank.rank == Ranking.Rank.STRAIGHT_FLUSH ||
-            rank.rank == Ranking.Rank.ROYAL_FLUSH ||
-            rank.rank == Ranking.Rank.FLUSH ||
-            rank.rank == Ranking.Rank.HIGH_CARD)
+        Dictionary<Card.Value, List<Card>> pairs1 = GatherPairs(rank.cards);
+        Dictionary<Card.Value, List<Card>> pairs2 = GatherPairs(comparedToRank.cards);
+
+        List<Card.Value> pairValues1 = new List<Card.Value>();
+        List<Card.Value> pairValues2 = new List<Card.Value>();
+
+        //Get just the values of the pairs
+        foreach (KeyValuePair<Card.Value, List<Card>> pair in pairs1)
         {
-            for(int i = 0; i < rank.cards.Count; i++)
+            if(pair.Value.Count == 3) //In full house, threes are compared first before the pairs
+                pairValues1.Insert(0, pair.Key);
+            else if (pair.Value.Count > 1)
+                pairValues1.Add(pair.Key);
+        }
+        foreach (KeyValuePair<Card.Value, List<Card>> pair in pairs2)
+        {
+            if (pair.Value.Count > 1)
+                pairValues2.Add(pair.Key);
+        }
+
+        //Compare the values of the pairs
+        for (int i = 0; i < pairValues1.Count; i++)
+        {
+            if ((int)pairValues1[i] > (int)pairValues2[i])
             {
-                if (rank.cards[i].cardValue > comparedToRank.cards[i].cardValue)
+                return Result.WIN;
+            }
+            else if ((int)pairValues1[i] < (int)pairValues2[i])
+            {
+                return Result.LOSE;
+            }
+            else
+                continue;
+        }
+
+        List<Card.Value> kicker1 = new List<Card.Value>();
+        List<Card.Value> kicker2 = new List<Card.Value>();
+        if (rank.rank != Ranking.Rank.FULL_HOUSE) //Full house doesn't have kicker, skip
+        {
+            //Find the kickers and compare them
+            for (int j = 0; j < rank.cards.Count; j++)
+            {
+                if (pairValues1.BinarySearch(rank.cards[j].cardValue) < 0)
+                {
+                    kicker1.Add(rank.cards[j].cardValue);
+                }
+            }
+            for (int j = 0; j < comparedToRank.cards.Count; j++)
+            {
+                if (pairValues1.BinarySearch(comparedToRank.cards[j].cardValue) < 0)
+                {
+                    kicker2.Add(comparedToRank.cards[j].cardValue);
+                }
+            }
+
+            for (int j = 0; j < kicker1.Count; j++)
+            {
+                if (kicker1[j] > kicker2[j])
                 {
                     return Result.WIN;
                 }
-                else if (rank.cards[i].cardValue < comparedToRank.cards[i].cardValue)
+                else if (kicker1[j] < kicker2[j])
                 {
                     return Result.LOSE;
                 }
                 else
                     continue;
             }
-
             return Result.DRAW;
         }
-        else if(rank.rank == Ranking.Rank.FULL_HOUSE || rank.rank == Ranking.Rank.TWO_PAIRS ||
-            rank.rank == Ranking.Rank.ONE_PAIR ||
-            rank.rank == Ranking.Rank.THREE_OF_A_KIND ||
-            rank.rank == Ranking.Rank.FOUR_OF_A_KIND ||
-            rank.rank == Ranking.Rank.HIGH_CARD)
-        {
-            Dictionary<Card.Value, List<Card>> pairs1 = GatherPairs(rank.cards);
-            Dictionary<Card.Value, List<Card>> pairs2 = GatherPairs(comparedToRank.cards);
 
-            List<Card.Value> pairValues1 = new List<Card.Value>();
-            List<Card.Value> pairValues2 = new List<Card.Value>();
-
-            //Get just the values of the pairs
-            foreach (KeyValuePair<Card.Value, List<Card>> pair in pairs1)
-            {
-                if(pair.Value.Count > 1)
-                    pairValues1.Add(pair.Key);
-            }
-            foreach (KeyValuePair<Card.Value, List<Card>> pair in pairs2)
-            {
-                if (pair.Value.Count > 1)
-                    pairValues2.Add(pair.Key);
-            }
-
-            //Compare the values of the pairs
-            for (int i = 0; i < pairValues1.Count; i++)
-            {
-                if ((int)pairValues1[i] > (int)pairValues2[i])
-                {
-                    return Result.WIN;
-                }
-                else if ((int)pairValues1[i] < (int)pairValues2[i])
-                {
-                    return Result.LOSE;
-                }
-                else
-                    continue;
-            }
-
-            List<Card.Value> kicker1 = new List<Card.Value>();
-            List<Card.Value> kicker2 = new List<Card.Value>();
-            if (rank.rank != Ranking.Rank.FULL_HOUSE) //Full house doesn't have kicker, skip
-            {
-                //Find the kickers and compare them
-                for (int j = 0; j < rank.cards.Count; j++)
-                {
-                    if (pairValues1.BinarySearch(rank.cards[j].cardValue) < 0)
-                    {
-                        kicker1.Add(rank.cards[j].cardValue);
-                    }
-                }
-                for (int j = 0; j < comparedToRank.cards.Count; j++)
-                {
-                    if (pairValues1.BinarySearch(comparedToRank.cards[j].cardValue) < 0)
-                    {
-                        kicker2.Add(comparedToRank.cards[j].cardValue);
-                    }
-                }
-
-                for (int j = 0; j < kicker1.Count; j++)
-                {
-                    if (kicker1[j] > kicker2[j])
-                    {
-                        return Result.WIN;
-                    }
-                    else if (kicker1[j] < kicker2[j])
-                    {
-                        return Result.LOSE;
-                    }
-                    else
-                        continue;
-                }
-                return Result.DRAW;
-            }
-
-            return Result.DRAW;
-        }
-        else 
-            return Result.DRAW;
+        return Result.DRAW;
     }
 }

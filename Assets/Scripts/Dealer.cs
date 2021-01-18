@@ -13,10 +13,14 @@ public class Dealer
 
     public List<Card>[] playerHands = new List<Card>[NUMBER_OF_PLAYERS];
     public List<Card> communityCards = new List<Card>();
+    public Ranking[] rankings = new Ranking[NUMBER_OF_PLAYERS];
+
+    public RankManager.Result result;
 
     private Dealer()
     {
         deck = new Deck();
+        result = RankManager.Result.DRAW;
     }
 
     private static Dealer _instance;
@@ -30,7 +34,9 @@ public class Dealer
 
     public List<Card>[] DealCards()
     {
-        for(int i = 0; i < NUMBER_OF_PLAYERS; i++)
+        deck.ResetDeck();
+
+        for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             if (playerHands[i] == null)
                 playerHands[i] = new List<Card>();
@@ -40,6 +46,17 @@ public class Dealer
             playerHands[i].AddRange(deck.DrawCards(CARDS_PER_PLAYER));
         }
 
+        ///*DEBUG
+         {
+            Debug.Log("Player 1:");
+            Debug.Log(playerHands[0][0].cardValue.ToString()+"--"+ playerHands[0][0].cardSuit.ToString());
+            Debug.Log(playerHands[0][1].cardValue.ToString() + "--" + playerHands[0][1].cardSuit.ToString());
+
+            Debug.Log("Player 2:");
+            Debug.Log(playerHands[1][0].cardValue.ToString() + "--" + playerHands[1][0].cardSuit.ToString());
+            Debug.Log(playerHands[1][1].cardValue.ToString() + "--" + playerHands[1][1].cardSuit.ToString());
+        }
+         //*/
         return playerHands;
     }
 
@@ -52,38 +69,87 @@ public class Dealer
 
         communityCards.AddRange(deck.DrawCards(NUMBER_OF_COMMUNITY_CARDS));
 
+        ///*DEBUG
+        {
+            Debug.Log("Community:");
+            Debug.Log(communityCards[0].cardValue.ToString() + "--" + communityCards[0].cardSuit.ToString());
+            Debug.Log(communityCards[1].cardValue.ToString() + "--" + communityCards[1].cardSuit.ToString());
+            Debug.Log(communityCards[2].cardValue.ToString() + "--" + communityCards[2].cardSuit.ToString());
+            Debug.Log(communityCards[3].cardValue.ToString() + "--" + communityCards[3].cardSuit.ToString());
+            Debug.Log(communityCards[4].cardValue.ToString() + "--" + communityCards[4].cardSuit.ToString());
+        }
+        //*/
         return communityCards;
     }
 
     public void EvaluateHands()
     {
+        /*
+        //DEBUG
+        {
+            playerHands[0].Clear();
+            playerHands[1].Clear();
+            communityCards.Clear();
+
+            playerHands[0].Add(new Card(Card.Suit.DIAMOND, Card.Value.FOUR));
+            playerHands[0].Add(new Card(Card.Suit.DIAMOND, Card.Value.FIVE));
+
+            playerHands[1].Add(new Card(Card.Suit.SPADE, Card.Value.SEVEN));
+            playerHands[1].Add(new Card(Card.Suit.SPADE, Card.Value.THREE));
+
+            communityCards.Add(new Card(Card.Suit.HEART, Card.Value.TWO));
+            communityCards.Add(new Card(Card.Suit.CLUB, Card.Value.SIX));
+            communityCards.Add(new Card(Card.Suit.CLUB, Card.Value.EIGHT));
+            communityCards.Add(new Card(Card.Suit.HEART, Card.Value.NINE));
+            communityCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.SEVEN));
+        {
+            Debug.Log("Player 1:");
+            Debug.Log(playerHands[0][0].cardValue.ToString()+"--"+ playerHands[0][0].cardSuit.ToString());
+            Debug.Log(playerHands[0][1].cardValue.ToString() + "--" + playerHands[0][1].cardSuit.ToString());
+
+            Debug.Log("Player 2:");
+            Debug.Log(playerHands[1][0].cardValue.ToString() + "--" + playerHands[1][0].cardSuit.ToString());
+            Debug.Log(playerHands[1][1].cardValue.ToString() + "--" + playerHands[1][1].cardSuit.ToString());
+        }
+
+        {
+            Debug.Log("Community:");
+            Debug.Log(communityCards[0].cardValue.ToString() + "--" + communityCards[0].cardSuit.ToString());
+            Debug.Log(communityCards[1].cardValue.ToString() + "--" + communityCards[1].cardSuit.ToString());
+            Debug.Log(communityCards[2].cardValue.ToString() + "--" + communityCards[2].cardSuit.ToString());
+            Debug.Log(communityCards[3].cardValue.ToString() + "--" + communityCards[3].cardSuit.ToString());
+            Debug.Log(communityCards[4].cardValue.ToString() + "--" + communityCards[4].cardSuit.ToString());
+        }
+        }
+        //*/
+
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             List<Card> combinedCards = new List<Card>();
             combinedCards.AddRange(playerHands[i]);
             combinedCards.AddRange(communityCards);
 
-            //DEBUG
-            {
-                combinedCards.Clear();
-                //combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.ACE));
-                //combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.JACK));
-                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.KING));
-                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.JACK));
-                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.TEN));
-                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.QUEEN));
-                //combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.NINE));
-                combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.ACE));
-                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.KING));
-                combinedCards.Add(new Card(Card.Suit.HEART, Card.Value.KING));
-                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.TWO));
-                combinedCards.Add(new Card(Card.Suit.DIAMOND, Card.Value.KING));
-                combinedCards.Add(new Card(Card.Suit.CLUB, Card.Value.EIGHT));
-                combinedCards.Add(new Card(Card.Suit.SPADE, Card.Value.SEVEN));
-            }
-
-            Ranking ranking = HandRankManager.GetHandRankManager().EvaluateRank(combinedCards);
-            Debug.Log("Evaluated");
+            rankings[i] = RankManager.GetHandRankManager().EvaluateRank(combinedCards);
         }
+    }
+
+    public void EvaluateWinner()
+    {
+        result = RankManager.GetHandRankManager().CompareRanks(rankings[0], rankings[1]);
+
+
+        //List<int> places = new List<int>();
+        //RankManager.Result result = RankManager.Result.DRAW;
+
+        //places.Add(0);
+        //for (int i = 1; i < rankings.Length - 1; i++)
+        //{
+        //     for(int j = 0; j < places.Count; j++)
+        //    {
+        //        //result = RankManager.GetHandRankManager().CompareRanks(rankings[i], rankings[j]);
+        //    }
+        //}
+
+        //return places;
     }
 }

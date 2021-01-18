@@ -1585,7 +1585,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: IT'S A DRAW!
+  m_Text: Ready
 --- !u!222 &938805730
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2319,7 +2319,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Hand Rank: Three of a Kind'
+  m_Text: 
 --- !u!222 &1439807244
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2663,7 +2663,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Hand Rank: Three of a Kind'
+  m_Text: 
 --- !u!222 &1962386460
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2757,18 +2757,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 85212707}
     m_Modifications:
-    - target: {fileID: 995262990624632093, guid: 14942263e3f3a9a4c88178c8d2f803f7,
-        type: 3}
-      propertyPath: diamondSprites.Array.data[10]
-      value: 
-      objectReference: {fileID: 21300000, guid: ec719ddc4c52273419829ea5bfc2b13c,
-        type: 3}
-    - target: {fileID: 995262990624632093, guid: 14942263e3f3a9a4c88178c8d2f803f7,
-        type: 3}
-      propertyPath: diamondSprites.Array.data[11]
-      value: 
-      objectReference: {fileID: 21300000, guid: d2a3a080a781f9e459cbe1ddac231cda,
-        type: 3}
     - target: {fileID: 3880568655955231536, guid: 14942263e3f3a9a4c88178c8d2f803f7,
         type: 3}
       propertyPath: m_Name

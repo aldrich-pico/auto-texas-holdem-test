@@ -15,6 +15,11 @@ public class Game : MonoBehaviour
     [SerializeField]
     private GameObject resultPanel;
 
+    [SerializeField]
+    private Animator communityCardsAnimator;
+    [SerializeField]
+    private Animator playerCardsAnimator;
+
     CardTextureHandler[] player1CardTexHdlr;
     CardTextureHandler[] player2CardTexHdlr;
     CardTextureHandler[] communityCardTexHdlr;
@@ -26,6 +31,9 @@ public class Game : MonoBehaviour
     [SerializeField]
     private Text resultPanelText;
 
+    private Button playButton;
+    private bool isFirstRun;
+
     private void Awake()
     {
         player1CardTexHdlr = player1Cards.GetComponentsInChildren<CardTextureHandler>();
@@ -36,10 +44,11 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //resultPanel.SetActive(false);
         player1HandRankText.text = "";
         player2HandRankText.text = "";
         resultPanelText.text = "Ready";
+
+        isFirstRun = true;
     }
 
     // Update is called once per frame
@@ -51,17 +60,32 @@ public class Game : MonoBehaviour
         }
     }
 
-    public void onPlayButton(Button playButton)
+    public void onPlayButton(Button button)
     {
-        //playButton.interactable = false;
-
         Dealer.GetDealer().DealCards();
         Dealer.GetDealer().DealCommunityCards();
         Dealer.GetDealer().EvaluateHands();
         Dealer.GetDealer().EvaluateWinner();
-        UpdateCards();
-        UpdatePlayerPanels();
-        UpdateResultPanel();
+        
+
+        if (playButton == null)
+            playButton = button;
+
+        if(isFirstRun)
+        {
+            StartPlayerCardsAnimation();
+            isFirstRun = false;
+        }
+        else
+        {
+            player1HandRankText.text = "";
+            player2HandRankText.text = "";
+            resultPanelText.text = "Playing...";
+            communityCardsAnimator.SetBool("isReshuffle", true);
+            playerCardsAnimator.SetBool("isReshuffle", true);
+        }
+
+        playButton.interactable = false;
     }
 
     public void UpdateCards()
@@ -102,5 +126,28 @@ public class Game : MonoBehaviour
                 break;
         }
         
+    }
+
+    public void StartCommunityCardsAnimation()
+    {
+        communityCardsAnimator.SetBool("isRevealCommunityCards", true);
+    }
+
+    public void StartPlayerCardsAnimation()
+    {
+        UpdateCards();
+        communityCardsAnimator.SetBool("isReshuffle", false);
+        playerCardsAnimator.SetBool("isReshuffle", false);
+        playerCardsAnimator.SetBool("isGameStart", true);
+    }
+
+    public void StartEvaluation()
+    {
+        UpdatePlayerPanels();
+        UpdateResultPanel();
+
+        playerCardsAnimator.SetBool("isGameStart", false);
+        communityCardsAnimator.SetBool("isRevealCommunityCards", false);
+        playButton.interactable = true;
     }
 }
